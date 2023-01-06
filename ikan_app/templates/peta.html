@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h3 style="font-family: Georgia; text-align: center;">PETA SEBARAN PELELANGAN IKAN</h3><br>
+
+  <div class="container-fluid d-fle">
+    <div id="map" style="width: 1500px; height: 400px;"></div>
+      </div><br>
+<div class="container-fluid">
+    <a href="/tambah_peta" class="btn btn-success" role="button">Tambah</a><br>
+    <table class="table table-striped nomor" style="font-family: Georgia;">
+      <thead>
+        <tr style="text-align: center;">
+          <th>No.</th>
+          <th>Nama Pelelangan</th>
+          <th>Garis Bujur</th>
+          <th>Garis Lintang</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody style="text-align: center;">
+        <tr>
+          {% for pelelangan in lelang %}
+          <td></td>
+          <td>{{ pelelangan.nama }}</td>
+          <td>{{ pelelangan.bujur }}</td>
+          <td>{{ pelelangan.lintang }}</td>
+          <td>
+            <a class="btn btn-info" href="{% url 'update_peta' pelelangan.pk %}">Edit</a>
+            <a class="btn btn-danger"  href="#" role="button" onclick="hapusbuku('{{ pelelangan.pk }}', '{{ pelelangan.nama }}')">Hapus</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+<script>
+
+  var map = L.map('map').setView([-5.801879295825626, 106.45676754901723], 8);
+  
+  var imagery = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+  
+  var data_pelelangan = JSON.parse("{{marker_json|escapejs}}");
+  console.log(data_pelelangan);
+  
+  data_pelelangan.map(e=>{
+    L.marker([e.fields.lintang, e.fields.bujur]).addTo(map)
+  })
+  
+  function hapusbuku(id, nama) {
+    swal({
+      title: "Apakah Anda Yakin?",
+      text: "Setelah data " + nama + " dihapus, data tidak dapat dikembalikan!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+      .then((willDelete) => {
+        if (willDelete) {
+          swal("Berhasil!", "Data " + nama + " Berhasil Dihapus!", "success").then(function () {
+            window.location = "/peta/hapus_peta/" + id;
+          });
+        }
+      });
+  }
+</script>
+{% endblock %}

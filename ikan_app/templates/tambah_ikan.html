@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<br>   
+ <div class="container  min-vh-100">
+    <h3 style="font-family: Georgia;">{{ Title }}</h3><br>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="/tambah_ikan/" method="POST" enctype="multipart/form-data">
+                {{ form.as_p }}
+                {% csrf_token %}
+                <br>
+                <a href="/ikan" class="btn btn-outline-dark">Kembali</a>
+                <button type="submit" value="Simpan" class="btn btn-success">Simpan</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if pesan %}
+<script>
+    swal({
+    text : "{{pesan}}",
+    title: "Berhasil",
+    icon : "success",
+}).then((value) => {
+    window.location.href = "/tambah_ikan"
+});  
+</script>
+{% endif %}
+
+{% endblock %}
